@@ -5,8 +5,9 @@
 #include "player.h"
 
 constexpr int MAX_NAME_LENGTH = 10;
-constexpr int MAXPLAYER = 4;
-constexpr int MAXLEVEL = 5;
+constexpr int MAX_PLAYER = 4;
+constexpr int MAX_LEVEL = 5;
+constexpr int MIN_LEVEL = 1;
 
 // ============ MapUnit ============
 class MapUnit {
@@ -21,10 +22,10 @@ public:
     void removePlayer(Player *player);
 
     int getId() const;
-    std::string getName() const;
+    const std::string& getName() const;
     Player* getOwner() const;
     int getPrice() const;
-    const std::vector<Player*>& getPlayersHere() const;
+    const std::vector<Player*>& whoishere() const;
 
     void setOwner(Player *owner);
 
@@ -35,7 +36,7 @@ protected:
     std::string name_;
     int price_;
     Player *owner_;
-    std::vector<Player*> playersHere;
+    std::vector<Player*> whoishere_;
 };
 
 // ============ UpgradableUnit ============
@@ -57,6 +58,7 @@ public:
     int getBaseFine() const;
 
     void event(Player &player) override;
+    void printUnit(std::ostream &os) const override;
 
 private:
     int level_;
@@ -72,8 +74,12 @@ public:
     CollectableUnit(int id, const std::string &name, int price, int fine);
     ~CollectableUnit() override = default;
 
-    void event(Player &player) override;
+    void printUnit(std::ostream &os) const override;
+
+    int getFine() const;
+
     int calculateFine() const;
+    void event(Player &player) override;
 
 private:
     int fine_;
@@ -86,11 +92,17 @@ public:
     RandomCostUnit(int id, const std::string &name, int price, int fine);
     ~RandomCostUnit() override = default;
 
-    void event(Player &player) override;
+    void printUnit(std::ostream &os) const override;
+
+    int getFine() const;
+
     int calculateFine() const;
+    void event(Player &player) override;
+
 
 private:
     int fine_;
+    int rollDice() const;
 };
 
 // =========== JailUnit ============
@@ -100,8 +112,8 @@ public:
     JailUnit(int id, const std::string &name);
     ~JailUnit() override = default;
 
+    void printUnit(std::ostream &os) const override;
     void event(Player &player) override;
 };
-
 
 #endif // MAP_H
