@@ -1,51 +1,17 @@
-#include <string>
+#include "map.h"
 
 // ============ MapUnit ============
-class MapUnit {
-public:
-    // Constructor & Destructor
-    MapUnit(int id, const std::string &name, int price);
-    virtual ~MapUnit() = default;
-
-    // Function triggered when a player lands on this unit
-    virtual void trigger(Player &player) = 0;
-
-    // Basic Operations
-    void addPlayer(Player *player);
-    void removePlayer(Player *player);
-
-    // Getters
-    int getId() const;
-    std::string getName() const;
-    Player* getOwner() const;
-    int getPrice() const;
-    const std::vector<Player*>& getPlayersHere() const;
-
-    // Setters
-    void setOwner(Player *owner);
-
-    // Virtual print function
-    virtual void print(std::ostream &os) const;
-
-protected:
-    int id_;
-    std::string name_;
-    int price_;
-    Player *owner_;
-    std::vector<Player*> playersHere;
-};
-
 MapUnit::MapUnit(int id, const std::string &name, int price)
     : id_(id), name_(name), price_(price), owner_(nullptr) {}
 
 void MapUnit::addPlayer(Player *player) {
-    playersHere.push_back(player);
+    whoishere_.push_back(player);
 }
 
 void MapUnit::removePlayer(Player *player) {
-    auto it = std::remove(playersHere.begin(), playersHere.end(), player);
-    if (it != playersHere.end()) {
-        playersHere.erase(it);
+    auto it = std::remove(whoishere_.begin(), whoishere_.end(), player);
+    if (it != whoishere_.end()) {
+        whoishere_.erase(it);
     }
 }
 
@@ -66,38 +32,18 @@ Player* MapUnit::getOwner() const {
 }
 
 const std::vector<Player*>& MapUnit::getPlayersHere() const {
-    return playersHere;
+    return whoishere_;
 }
 
 void MapUnit::setOwner(Player *owner) {
     owner_ = owner;
 }
 
-
 // ============ UpgradableUnit ============
-class UpgradableUnit : public MapUnit {
-public:
-    // Constructor & Destructor
-    UpgradableUnit(int id, const std::string &name, int price, int level, int upgradePrice, int baseFine);
-    ~UpgradableUnit() override = default;
+UpgradableUnit::UpgradableUnit(int id, const std::string &name, int price, int level, int upgradePrice, int baseFine)
+    : MapUnit(id, name, price), level_(level), upgradePrice_(upgradePrice), baseFine_(baseFine) {}
 
-    bool isOwned() const;
-    bool isUpgradable() const;
-    int calculateFine() const;
-    
-    void upgrade();
-    void reset();
-
-    // Getters
-    int getLevel() const;
-    int getUpgradePrice() const;
-    int getBaseFine() const;
-
-    void triggerEvent(Player *p) ovverride;
-
-protected:
-    int level_;
-    int upgradePrice_;
-    int baseFine_;
-};
+bool UpgradableUnit::isOwned() const {
+    return owner_ != nullptr;
+}
 
