@@ -47,3 +47,50 @@ bool UpgradableUnit::isOwned() const {
     return owner_ != nullptr;
 }
 
+bool UpgradableUnit::isUpgradable() const {
+    return isOwned() && level_ < MAX_LEVEL;
+}
+
+int UpgradableUnit::calculateFine() const {
+    return baseFine_ * level_;
+}
+
+void UpgradableUnit::upgrade() {
+    if (isUpgradable()) {
+        ++level_;
+    }
+}
+
+void UpgradableUnit::reset() {
+    level_ = 1; // Reset to initial level
+    owner_ = nullptr;
+}
+
+int UpgradableUnit::getLevel() const {
+    return level_;
+}
+
+int UpgradableUnit::getUpgradePrice() const {
+    return upgradePrice_;
+}
+
+int UpgradableUnit::getBaseFine() const {
+    return baseFine_;
+}
+
+void UpgradableUnit::event(Player *p) {
+    if (!isOwned()) {
+        // Player can choose to buy the unit
+
+    }
+    else if (owner_ != p) {
+        // Player must pay the fine
+
+    }
+    else {
+        // Player owns the unit, can upgrade if possible
+        if (isUpgradable()) {
+            // Upgrade
+        }
+    }
+}

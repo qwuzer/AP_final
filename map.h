@@ -1,4 +1,9 @@
+#ifndef MAP_H
+#define MAP_H
+
 #include <string>
+
+constexpr int MAXLEVEL = 5;
 
 // ============ MapUnit ============
 class MapUnit {
@@ -8,7 +13,7 @@ public:
     virtual ~MapUnit() = default;
 
     // Function triggered when a player lands on this unit
-    virtual void trigger(Player &player) = 0;
+    virtual void event(Player &player) = 0;
 
     // Basic Operations
     void addPlayer(Player *player);
@@ -54,10 +59,13 @@ public:
     int getUpgradePrice() const;
     int getBaseFine() const;
 
-    void triggerEvent(Player *p) override;
+    void event(Player *p) override;
 
 protected:
     int level_;
     int upgradePrice_;
     int baseFine_;
 };
+
+
+#endif // MAP_H
