@@ -2,6 +2,7 @@
 #include "player.h"
 #include <string>
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -51,11 +52,10 @@ int Player::getNumberOfUnits() const
 
 
 
-WorldPlayer::WorldPlayer(int numPlayers):numPlayers_(numPlayers)
+WorldPlayer::WorldPlayer(int numPlayers):numPlayers_(std::min(numPlayers, maxPlayersNum))
 {
     if(numPlayers_>maxPlayersNum)
     {
-        numPlayers_=maxPlayersNum;
         cerr<<"A maximum of "<<maxPlayersNum<<"players is allowed."<<endl;
     }
     for (int i = 0; i < numPlayers_; ++i) 
@@ -120,15 +120,21 @@ int WorldPlayer::getNumPlayers() const
     return numPlayers_;
 }
         
-bool checkAnswer(const string& answer)
-{
-    if (answer.size() != 1) {
-        return false;
-    }
+// bool checkAnswer(const string& answer)
+// {
+//     if (answer.size() != 1) {
+//         return false;
+//     }
 
-    char c = answer[0];
-    return c == 'n' || c == 'N' || c == 'y' || c == 'Y';
+//     char c = answer[0];
+//     return c == 'n' || c == 'N' || c == 'y' || c == 'Y';
+// }
+bool checkAnswer(const std::string& answer)
+{
+    static const std::set<char> valid{'y','Y','n','N'};
+    return answer.size() == 1 && valid.count(answer[0]);
 }
+
 
 std::ostream& operator<<(std::ostream& os,const Player& player)
 {
