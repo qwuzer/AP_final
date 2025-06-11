@@ -15,6 +15,7 @@ bool Player::deduct(int const cost)
 {
     if (cost>money_)
     {
+        cout<<name_<<", you're bankrupt!"<<endl;
         return false;
     }
     money_-=cost;
