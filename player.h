@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-constexpr int initDeposit=15000;//???
+constexpr int initDeposit=30000;//???
 constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
 
