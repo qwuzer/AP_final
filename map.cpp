@@ -41,7 +41,7 @@ void MapUnit::setOwner(Player *owner) {
 
 // ============ UpgradableUnit ============
 UpgradableUnit::UpgradableUnit(int id, const std::string &name, int price, int upgrade_price, int base_fine)
-    : MapUnit(id, name, price), level_(MINLEVEL), upgradePrice_(upgrade_price), baseFine_(base_fine) {}
+    : MapUnit(id, name, price), level_(MIN_LEVEL), upgradePrice_(upgrade_price), baseFine_(base_fine) {}
 
 bool UpgradableUnit::isOwned() const {
     return owner_ != nullptr;
@@ -85,7 +85,7 @@ void UpgradableUnit::event(Player &player) {
         } 
 
     }
-    else if (owner_ != p) {
+    else if (owner_ != player) {
         // Player must pay the fine
         int totalFine = calculateFine();
         player.deduct(totalFine);

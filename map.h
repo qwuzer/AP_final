@@ -43,7 +43,7 @@ protected:
 class UpgradableUnit : public MapUnit {
 public:
     // Constructor & Destructor
-    UpgradableUnit(int id, const std::string &name, int price, int level, int upgradePrice, int baseFine);
+    UpgradableUnit(int id, const std::string &name, int price, int upgrade_price, int base_fine);
     ~UpgradableUnit() override = default;
 
     bool isOwned() const;
