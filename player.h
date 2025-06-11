@@ -11,6 +11,7 @@ class Player{
 
     void changeName(const std::string& newName);
     bool deduct(int const cost);
+    void earnings(int const toll);
     void move(int const rolledNum);
     void addUnit();
 

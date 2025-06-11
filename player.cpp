@@ -20,6 +20,10 @@ bool Player::deduct(int const cost)
     money_-=cost;
     return true;
 }
+void Player::earnings(int const toll)
+{
+    money_+=toll;
+}
 void Player::move(int const rolledNum)
 {
     location_=(location_+rolledNum)%mapSize;
@@ -120,15 +124,6 @@ int WorldPlayer::getNumPlayers() const
     return numPlayers_;
 }
         
-// bool checkAnswer(const string& answer)
-// {
-//     if (answer.size() != 1) {
-//         return false;
-//     }
-
-//     char c = answer[0];
-//     return c == 'n' || c == 'N' || c == 'y' || c == 'Y';
-// }
 bool checkAnswer(const std::string& answer)
 {
     static const std::set<char> valid{'y','Y','n','N'};
