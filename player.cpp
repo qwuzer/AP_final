@@ -19,9 +19,9 @@ bool Player::deduct(int const cost)
     money_-=cost;
     return true;
 }
-void Player::move(int const rolledNum)//not done yet
+void Player::move(int const rolledNum)
 {
-    location_=(location_+rolledNum)%9;//9->map size
+    location_=(location_+rolledNum)%mapSize;
 }
 void Player::addUnit()
 {

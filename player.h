@@ -1,6 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+constexpr int initDeposit=15000;//???
+constexpr int mapSize=9;
+
 class Player{
     public:
     Player(int id, std::string name);
@@ -20,7 +23,7 @@ class Player{
         const int id_;
         std::string name_="";
         int location_=0;
-        int money_=15000;//?
+        int money_=initDeposit;
         int numUnits_=0;
 };
 class WorldPlayer{
