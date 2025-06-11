@@ -3,10 +3,16 @@
 #include <string>
 #include <vector>
 #include <set>
+#include "map.h"
+#include "WorldMap.h"
+
 
 using namespace std;
 
-Player::Player(int id, string name):id_(id), name_(name){}    
+Player::Player(int id, string name):id_(id), name_(name){}  
+bool Player::operator==(const Player& other) const {
+    return id_ == other.id_;
+}  
 void Player::changeName(const string& newName) 
 {
     name_ = newName;
@@ -28,6 +34,10 @@ void Player::earnings(int const toll)
 void Player::move(int const rolledNum)
 {
     location_=(location_+rolledNum)%mapSize;
+    if (location_==0)
+    {
+        earnings(2000);
+    }
 }
 void Player::addUnit()
 {
@@ -101,9 +111,11 @@ bool WorldPlayer::Action1()//new round
     cerr<<"Invalid input."<<endl;
     return Action1();
 }
-bool WorldPlayer::Action2(int rolledNum)//worldmap&//after rolled the dice //not done yet
+bool WorldPlayer::Action2(int rolledNum, WorldMap& worldMap)//worldmap&//after rolled the dice //not done yet
 {
     players_[currentPlayer_].move(rolledNum);
+    
+    
     //
 }
 

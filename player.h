@@ -1,13 +1,15 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-constexpr int initDeposit=30000;//???
+constexpr int initDeposit=30000;
 constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
+class WorldMap;
 
 class Player{
     public:
     Player(int id, std::string name);
+    bool operator==(const Player& other) const;
 
     void changeName(const std::string& newName);
     bool deduct(int const cost);
@@ -35,7 +37,7 @@ class WorldPlayer{
         WorldPlayer operator++(int);
         
         bool Action1();//new round
-        bool Action2(int rolledNum);//after rolled the dice
+        bool Action2(int rolledNum, WorldMap& worldMap);//after rolled the dice
         
         Player& getPlayer(int index);
         int currentPlayerIs() const;
