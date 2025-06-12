@@ -37,7 +37,7 @@ class WorldPlayer{
         WorldPlayer operator++(int);
         
         bool Action1();//new round
-        bool Action2(int rolledNum, WorldMap& worldMap);//after rolled the dice
+        void Action2(int rolledNum, WorldMap& worldMap);//after rolled the dice
         
         Player& getPlayer(int index);
         int currentPlayerIs() const;

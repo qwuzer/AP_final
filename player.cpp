@@ -111,12 +111,10 @@ bool WorldPlayer::Action1()//new round
     cerr<<"Invalid input."<<endl;
     return Action1();
 }
-bool WorldPlayer::Action2(int rolledNum, WorldMap& worldMap)//worldmap&//after rolled the dice //not done yet
+void WorldPlayer::Action2(int rolledNum, WorldMap& worldMap)//after rolled the dice
 {
     players_[currentPlayer_].move(rolledNum);
-    
-    
-    //
+    worldMap.getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
 }
 
 Player& WorldPlayer::getPlayer(int index) 
