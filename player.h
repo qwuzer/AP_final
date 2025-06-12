@@ -32,12 +32,12 @@ class Player{
 };
 class WorldPlayer{
     public:
-        WorldPlayer(int numPlayers);
+        WorldPlayer(int numPlayers, WorldMap* map);
         WorldPlayer& operator++();
         WorldPlayer operator++(int);
         
         bool Action1();//new round
-        void Action2(int rolledNum, WorldMap& worldMap);//after rolled the dice
+        void Action2(int rolledNum);//after rolled the dice
         
         Player& getPlayer(int index);
         int currentPlayerIs() const;
@@ -49,6 +49,7 @@ class WorldPlayer{
         std::vector<Player> players_;
         const std::vector<std::string> defaultName_={"Frieren", "Himmel", "Heiter", "Eisen"};
         int currentPlayer_=0;
+        WorldMap *map_=nullptr;
 };
 
 bool checkAnswer(const std::string& answer);

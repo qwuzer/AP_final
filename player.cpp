@@ -67,7 +67,7 @@ int Player::getNumberOfUnits() const
 
 
 
-WorldPlayer::WorldPlayer(int numPlayers):numPlayers_(std::min(numPlayers, maxPlayersNum))
+WorldPlayer::WorldPlayer(int numPlayers, WorldMap* map):numPlayers_(std::min(numPlayers, maxPlayersNum)), map_(map)
 {
     if(numPlayers_>maxPlayersNum)
     {
@@ -111,10 +111,10 @@ bool WorldPlayer::Action1()//new round
     cerr<<"Invalid input."<<endl;
     return Action1();
 }
-void WorldPlayer::Action2(int rolledNum, WorldMap& worldMap)//after rolled the dice
+void WorldPlayer::Action2(int rolledNum)//after rolled the dice
 {
     players_[currentPlayer_].move(rolledNum);
-    worldMap.getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
+    (*map_).getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
 }
 
 Player& WorldPlayer::getPlayer(int index) 
