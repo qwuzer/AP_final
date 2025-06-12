@@ -1,4 +1,5 @@
 #include "map.h"
+// #include "WorldMap.h"
 
 // ============ MapUnit ============
 MapUnit::MapUnit(int id, const std::string &name, int price)
@@ -85,16 +86,17 @@ void UpgradableUnit::event(Player &player) {
         } 
 
     }
-    else if (owner_ != player) {
-        // Player must pay the fine
-        int totalFine = calculateFine();
-        player.deduct(totalFine);
-    }
-    else {
+    else if (*owner_ == player) {
         // Player owns the unit, can upgrade if possible
         if (isUpgradable()) {
             // TODO: Player can choose to upgrade
         }
+    }
+    else {
+        // Player must pay the fine
+        int totalFine = calculateFine();
+        player.deduct(totalFine);
+        owner_->earnings(totalFine);
     }
 }
 
@@ -115,13 +117,19 @@ int CollectableUnit::getFine() const {
     return fine_;
 }
 
-int CollectableUnit::calculateFine() const {
+int CollectableUnit::calculateFine(const std::vector<MapUnit*>& allUnits) const {
     if (!owner_) {
         return 0; // Not owned, no fine
     }
 
     int count = 0;
     // TODO: Count the number of Collectable units owned by the player
+    for (const auto& unit : allUnits) {
+        auto* cu = dynamic_cast<CollectableUnit*>(unit);
+        if (cu && cu->getOwner() == owner_) {
+            ++count;
+        }
+    }
     return count * fine_;
 }
 
@@ -133,10 +141,10 @@ void CollectableUnit::event(Player &player) {
     }
     else if (owner_ != &player) {
         // Player must pay the fine to owner
-        int totalFine = calculateFine();
+        // FIXME: Calculate fine based on the number of Collectable units owned by the owner
+        int totalFine = calculateFine(worldMap.getUnits());
         player.deduct(totalFine);
-        // TODO: Transfer money to owner
-
+        owner_->earnings(totalFine);
     }
 }
 
@@ -168,12 +176,11 @@ void RandomCostUnit::event(Player &player) {
             // player add owned unit
         }
     }
-    else if (owner_ != &player) {
+    else if (*owner_ == player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
         player.deduct(totalFine);
-        // TODO: Transfer money to owner
-        // own
+        owner_->earnings(totalFine);
 
     }
 }
