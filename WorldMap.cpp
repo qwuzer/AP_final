@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+using namespace std;
 
 void WorldMap::loadFromFile(const std::string& filename) {
     std::ifstream in(filename);
@@ -63,7 +64,9 @@ size_t WorldMap::size() const {
 
 void WorldMap::display( WorldPlayer& worldPlayer) const {
     int total = size();
+    cout << "total: " << total << endl;
     int mid = total / 2 + total % 2;
+    cout << "mid: " << mid << endl;
 
     for (int row = 0; row < mid; ++row) {
         int leftIdx = row;
@@ -92,7 +95,7 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
     oss << std::setw(4) << ("[" + std::to_string(i) + "]");
 
     // unit name    
-    oss << std::setw(10) << std::left << unit->getName();
+    oss << std::setw(10) << std::right << unit->getName();
 
     // <owner> //getOwner if no owner?
     if (unit->getOwner()) {
@@ -108,11 +111,15 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
         std::string type = up->getOwner() ? "U$" : "B$";
         oss << std::setw(5) << type;
         oss << std::setw(5) << up->calculateFine();
-        oss << "L" << up->getLevel();
+        oss << " L" << up->getLevel();
     }
     else if (auto* c = dynamic_cast<const CollectableUnit*>(unit)) {
         // Collectable: <owner> x N (no fine, no level)
-        // oss << " x " << c->getCount();
+        if (c->getOwner()) {
+            oss << " x " << c->getOwner()->getNumberOfCollectableUnits();
+        } else {
+            oss << " x 0";
+        }
     }
     else if (dynamic_cast<const RandomCostUnit*>(unit)) {
         // Random: just display "?" (no fine, no level)

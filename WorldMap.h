@@ -5,7 +5,11 @@
 
 class WorldMap {
 public:
-    WorldMap() = default;
+    WorldMap() {
+        for (int i = 0; i < 20; i++) {
+            units_[i] = nullptr;
+        }
+    };
 
     void loadFromFile(const std::string& filename);
     MapUnit* getUnit(int index) const;

@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>
+#include <vector>
 
 constexpr int initDeposit=30000;
 constexpr int mapSize=9;
