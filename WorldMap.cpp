@@ -75,7 +75,8 @@ void WorldMap::display( WorldPlayer& worldPlayer) const {
         std::string left = formatUnitDisplay(leftIdx, worldPlayer);
         std::string right = (rightIdx < total) ? formatUnitDisplay(rightIdx, worldPlayer) : "";
 
-        std::cout << left << "    " << right << "\n";
+        // std::cout << left << "    " << right << "\n";
+        std::cout << std::left << std::setw(40) << left << right << "\n";
     }
 }
 
@@ -99,34 +100,40 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
 
     // <owner> //getOwner if no owner?
     if (unit->getOwner()) {
-        oss << std::setw(4) << ("<" + std::to_string(unit->getOwner()->getID()) + ">");
+        oss << std::setw(4) << std::right << ("{" + std::to_string(unit->getOwner()->getID()) + "}");
     } else {
-        oss << std::setw(4) << "< >";
+        oss << std::setw(4) << "  ";
     }
     
     // type
     std::string type = " ";
     if (auto* up = dynamic_cast<const UpgradableUnit*>(unit)) {
-        // B$ or U$ with fine and level
-        std::string type = up->getOwner() ? "U$" : "B$";
-        oss << std::setw(5) << type;
-        oss << std::setw(5) << up->calculateFine();
-        oss << " L" << up->getLevel();
+        if (up->getOwner()) {
+            // Owned: show upgraded price and level
+            oss << std::setw(3) << "U$";
+            oss << std::setw(5) << up->calculateFine();
+            oss << " L" << up->getLevel();
+        } else {
+            // Not owned: show base price
+            oss << std::setw(3) << "B$";
+            oss << std::setw(5) << up->getPrice();
+        }
     }
     else if (auto* c = dynamic_cast<const CollectableUnit*>(unit)) {
         // Collectable: <owner> x N (no fine, no level)
         if (c->getOwner()) {
-            oss << " x " << c->getOwner()->getNumberOfCollectableUnits();
+            oss << " x" << c->getOwner()->getNumberOfCollectableUnits();
         } else {
-            oss << " x 0";
+            oss <<  std::setw(3) << "C$";
+            oss << std::setw(5) << c->getPrice();
         }
     }
     else if (dynamic_cast<const RandomCostUnit*>(unit)) {
         // Random: just display "?" (no fine, no level)
-        oss << std::setw(5) << "?";
+        oss << std::setw(3) << "?";
     }
     else if (dynamic_cast<const JailUnit*>(unit)) {
-        oss << std::setw(5) << "J";
+        oss << std::setw(3) << "J";
     }
 
     return oss.str();

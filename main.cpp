@@ -21,8 +21,20 @@ int main() {
 
     cout << players << endl;
 
+    MapUnit* unit2 = map.getUnit(2);  // Assume Upgradable
+    if (auto* up = dynamic_cast<UpgradableUnit*>(unit2)) {
+        up->setOwner(&players.getPlayer(0));
+        up->upgrade(); // Optional: to see level increment
+    }
+
+    MapUnit* unit6 = map.getUnit(6);  // Assume Collectable
+    if (auto* c = dynamic_cast<CollectableUnit*>(unit6)) {
+        c->setOwner(&players.getPlayer(2));
+        c->getOwner()->addCollectableUnit(); // simulate ownership increase
+        c->getOwner()->addCollectableUnit(); // simulate ownership increase
+    }
+
     // // Step 4: Display the map (2-column layout)
-    // std::cout << "========= Game Board =========\n";
     map.display(players);
 
     // // Step 5: Print player status
