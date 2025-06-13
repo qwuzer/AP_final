@@ -1,6 +1,6 @@
 #include "WorldMap.h"
 #include "player.h"
-#include "map.h"
+// #include "map.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -23,7 +23,7 @@ void WorldMap::loadFromFile(const std::string& filename) {
                 iss >> price >> upgrade_price;
                 std::vector<int> fines(5);
                 for (int& fine : fines) iss >> fine;
-                units_[idx++] = UpgradableUnit(idx - 1, name, price, upgrade_price, fines[0]);
+                units_[idx++] = new UpgradableUnit(idx - 1, name, price, upgrade_price, fines[0]);
             }
            else if (type == 'C') {
                 int price, fine;

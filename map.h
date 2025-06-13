@@ -78,7 +78,7 @@ public:
 
     int getFine() const;
 
-    int calculateFine(const std::vector<MapUnit*>& allUnits) const;
+    int calculateFine() const;
     void event(Player &player) override;
 
 private:

@@ -43,7 +43,7 @@ void Player::addUnit()
 {
     numUnits_++;
 }
-string Player::getName() const 
+std::string Player::getName() const 
 {
     return name_;
 }

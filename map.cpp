@@ -1,5 +1,6 @@
+#include <iostream>
 #include "map.h"
-// #include "WorldMap.h"
+#include "WorldMap.h"
 
 // ============ MapUnit ============
 MapUnit::MapUnit(int id, const std::string &name, int price)
@@ -117,19 +118,13 @@ int CollectableUnit::getFine() const {
     return fine_;
 }
 
-int CollectableUnit::calculateFine(const std::vector<MapUnit*>& allUnits) const {
+int CollectableUnit::calculateFine() const {
     if (!owner_) {
         return 0; // Not owned, no fine
     }
 
     int count = 0;
     // TODO: Count the number of Collectable units owned by the player
-    for (const auto& unit : allUnits) {
-        auto* cu = dynamic_cast<CollectableUnit*>(unit);
-        if (cu && cu->getOwner() == owner_) {
-            ++count;
-        }
-    }
     return count * fine_;
 }
 
@@ -142,7 +137,7 @@ void CollectableUnit::event(Player &player) {
     else if (owner_ != &player) {
         // Player must pay the fine to owner
         // FIXME: Calculate fine based on the number of Collectable units owned by the owner
-        int totalFine = calculateFine(worldMap.getUnits());
+        int totalFine = calculateFine();
         player.deduct(totalFine);
         owner_->earnings(totalFine);
     }
@@ -181,7 +176,6 @@ void RandomCostUnit::event(Player &player) {
         int totalFine = calculateFine();
         player.deduct(totalFine);
         owner_->earnings(totalFine);
-
     }
 }
 
