@@ -1,6 +1,7 @@
-#pragma once
+#ifndef WORLD_MAP_H
+#define WORLD_MAP_H
 #include <string>
-#include "MapUnit.h"
+#include "map.h"
 
 class WorldMap {
 public:
@@ -9,7 +10,10 @@ public:
     void loadFromFile(const std::string& filename);
     MapUnit* getUnit(int index) const;
     size_t size() const;
-    void printMap() const;  
+    void display(const WorldPlayer& worldPlayer) const;
+    std::string formatUnitDisplay(int i, const WorldPlayer& worldPlayer) const;
 private:
     MapUnit* units_[20]; 
-};wo
+};
+
+#endif
