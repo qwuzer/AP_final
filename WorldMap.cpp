@@ -45,12 +45,20 @@ void WorldMap::loadFromFile(const std::string& filename) {
 }
 
 MapUnit* WorldMap::getUnit(int index) const {
-    if (index < 0 || index >= (int)units_.size()) return nullptr;
+    if (index < 0 || index >= 20) return nullptr;
     return units_[index];
 }
 
+size_t WorldMap::size() const {
+    size_t count = 0;
+    for (const auto& unit : units_) {
+        if (unit != nullptr) ++count;
+    }
+    return count;
+}
 
-void WorldMap::display(const WorldPlayer& worldPlayer) const {
+
+void WorldMap::display( WorldPlayer& worldPlayer) const {
     int total = size();
     int mid = total / 2 + total % 2;
 
@@ -66,7 +74,7 @@ void WorldMap::display(const WorldPlayer& worldPlayer) const {
 }
 
 
-std::string WorldMap::formatUnitDisplay(int i, const WorldPlayer& worldPlayer) const {
+std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const {
     std::ostringstream oss;
     const MapUnit* unit = units_[i];
 
@@ -101,7 +109,7 @@ std::string WorldMap::formatUnitDisplay(int i, const WorldPlayer& worldPlayer) c
     }
     else if (auto* c = dynamic_cast<const CollectableUnit*>(unit)) {
         // Collectable: <owner> x N (no fine, no level)
-        oss << " x " << c->getCount();
+        // oss << " x " << c->getCount();
     }
     else if (dynamic_cast<const RandomCostUnit*>(unit)) {
         // Random: just display "?" (no fine, no level)

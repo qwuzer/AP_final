@@ -14,7 +14,7 @@ class MapUnit {
 public:
     // Constructor & Destructor
     MapUnit(int id, const std::string &name, int price);
-    virtual ~MapUnit() = default;
+    virtual ~MapUnit() = 0;
 
     virtual void event(Player &player) = 0;
 

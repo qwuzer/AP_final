@@ -6,6 +6,8 @@
 MapUnit::MapUnit(int id, const std::string &name, int price)
     : id_(id), name_(name), price_(price), owner_(nullptr) {}
 
+MapUnit::~MapUnit() {};
+
 void MapUnit::addPlayer(Player *player) {
     whoishere_.push_back(player);
 }
