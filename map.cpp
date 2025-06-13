@@ -39,6 +39,7 @@ const std::vector<Player*>& MapUnit::whoishere() const {
 
 void MapUnit::setOwner(Player *owner) {
     owner_ = owner;
+    owner->addUnit();
 }
 
 void MapUnit::printUnit(std::ostream &os) const {

@@ -24,20 +24,23 @@ void WorldMap::loadFromFile(const std::string& filename) {
                 std::vector<int> fines(5);
                 for (int& fine : fines) iss >> fine;
                 units_[idx++] = new UpgradableUnit(idx - 1, name, price, upgrade_price, fines[0]);
+                std::cout << "Loaded UpgradableUnit: " << name << " with price: " << price << " and upgrade price: " << upgrade_price << "\n";
             }
-           else if (type == 'C') {
+            else if (type == 'C') {
                 int price, fine;
                 iss >> price >> fine;
-                CollectableUnit test(idx - 1, name, price, fine);
-                units_[idx++] = &test;
+                units_[idx++] = new CollectableUnit(idx - 1, name, price, fine);
+                std::cout << "Loaded CollectableUnit: " << name << " with price: " << price << " and fine: " << fine << "\n";
             }
             else if (type == 'R') {
                 int price, fine;
                 iss >> price >> fine;
                 units_[idx++] = new RandomCostUnit(idx - 1, name, price, fine);
+                std::cout << "Loaded RandomCostUnit: " << name << " with price: " << price << " and fine: " << fine << "\n";
             }
             else if (type == 'J') {
                 units_[idx++] = new JailUnit(idx - 1, name);
+                std::cout << "Loaded JailUnit: " << name << "\n";
             }
         }
         in.close();
