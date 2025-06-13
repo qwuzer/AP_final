@@ -17,12 +17,15 @@ class Player{
     void earnings(int const toll);
     void move(int const rolledNum);
     void addUnit();
+    void addCollectableUnit();
 
     std::string getName() const;
     int getID() const;
     int getLocation() const;
     int getMoney() const;
     int getNumberOfUnits() const;
+    int getNumberOfCollectableUnits() const;
+
         
     private:
         const int id_;
@@ -30,6 +33,7 @@ class Player{
         int location_=0;
         int money_=initDeposit;
         int numUnits_=0;
+        int numCollectableUnits_=0;
 };
 class WorldPlayer{
     public:

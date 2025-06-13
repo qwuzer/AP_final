@@ -43,6 +43,11 @@ void Player::addUnit()
 {
     numUnits_++;
 }
+void Player::addCollectableUnit()
+{
+    numCollectableUnits_++;
+}
+
 std::string Player::getName() const 
 {
     return name_;
@@ -63,6 +68,11 @@ int Player::getNumberOfUnits() const
 {
     return numUnits_;
 }
+int Player::getNumberOfCollectableUnits() const
+{
+    return numCollectableUnits_;
+}
+
         
 
 
