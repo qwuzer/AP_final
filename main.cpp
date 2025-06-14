@@ -82,10 +82,6 @@ int main() {
         if (players.Action1())
         {
             int unitType=players.Action2();
-            if (unitType==4)//jail
-            {
-                
-            }
             ++players;
             std::this_thread::sleep_for(std::chrono::seconds(2));
             string a;//for debugging
