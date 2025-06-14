@@ -64,9 +64,7 @@ size_t WorldMap::size() const {
 
 void WorldMap::display( WorldPlayer& worldPlayer) const {
     int total = size();
-    cout << "total: " << total << endl;
     int mid = total / 2 + total % 2;
-    cout << "mid: " << mid << endl;
 
     for (int row = 0; row < mid; ++row) {
         int leftIdx = row;
