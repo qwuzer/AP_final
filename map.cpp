@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "map.h"
 #include "WorldMap.h"
 
@@ -100,10 +102,8 @@ int UpgradableUnit::getBaseFine() const {
 }
 
 void UpgradableUnit::releaseOwner(Player* player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-        level_ = MIN_LEVEL;
-    }
+    owner_ = nullptr;
+    level_ = MIN_LEVEL;
 }
 
 int UpgradableUnit::event(Player &player) {
@@ -121,7 +121,10 @@ int UpgradableUnit::event(Player &player) {
             } else {
                 cout << "You chose not to buy " << getName() << ".\n";
             }
-        } 
+        }
+        else {
+            cout << "You cannot afford this Upgradable Unit.\n";
+        }
 
     }
     else if (*owner_ == player) {
@@ -146,15 +149,15 @@ int UpgradableUnit::event(Player &player) {
     else {
         // Player must pay the fine
         int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
         cout << "Owned by " << owner_->getName() << ". Paying fine $" << totalFine << ".\n";
         if (player.deduct(totalFine)) {
             owner_->earnings(totalFine);
         }
         else {
             // Insufficient funds to pay the fine, player go bankrupt
-            owner_->earnings(totalFine); // Owner still earns the fine
+            owner_->earnings(leftMoney); // Owner still earns the fine
             player.changeStatus(dead);
-            cout << player.getName() << " has gone bankrupt!\n";
             // Handle player bankruptcy (e.g., remove from game, transfer units)
             for (int i = 0; i < worldMap_->size(); ++i) {
                 MapUnit* unit = worldMap_->getUnit(i);
@@ -162,8 +165,10 @@ int UpgradableUnit::event(Player &player) {
                     unit->releaseOwner(&player);
                 }
             }
+            
         }
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return UPGRADABLEUNIT;
 }
 
@@ -193,9 +198,7 @@ int CollectableUnit::calculateFine() const {
 }
 
 void CollectableUnit::releaseOwner(Player* player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-    }
+    owner_ = nullptr;
 }
 
 int CollectableUnit::event(Player &player) {
@@ -216,17 +219,23 @@ int CollectableUnit::event(Player &player) {
                 }
             }
         }
+        else 
+        {
+            cout << "You cannot afford this Collectable Unit.\n";
+        }
     }
     else if (owner_ != &player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
+
         cout << "Owned by " << owner_->getName() << ". Pay fine $" << totalFine << ".\n";
         
         if (player.deduct(totalFine)) {
             owner_->earnings(totalFine);
         }
         else {
-            owner_->earnings(totalFine); // Owner still earns the fine
+            owner_->earnings(leftMoney); // Owner still earns the fine
             player.changeStatus(dead);
             cout << player.getName() << " has gone bankrupt!\n";
             // Handle player bankruptcy (e.g., remove from game, transfer units)
@@ -236,10 +245,12 @@ int CollectableUnit::event(Player &player) {
                     unit->releaseOwner(&player);
                 }
             }
+            
         }
     } else {
         cout << "You own this Collectable Unit.\n";
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return COLLECTABLEUNIT;
 }
 
@@ -286,13 +297,15 @@ int RandomCostUnit::event(Player &player) {
     else if (owner_ != &player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
+
         cout << "Random fine rolled. Pay $" << totalFine << ".\n";
 
         if (player.deduct(totalFine)) {
             owner_->earnings(totalFine);
         }
         else {
-            owner_->earnings(totalFine); // Owner still earns the fine
+            owner_->earnings(leftMoney); // Owner still earns the fine
             player.changeStatus(dead);
             cout << player.getName() << " has gone bankrupt!\n";
             // Handle player bankruptcy (e.g., remove from game, transfer units)
@@ -306,6 +319,7 @@ int RandomCostUnit::event(Player &player) {
     } else {
         cout << "You own this RandomCost Unit.\n";
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return RANDOMCOSTUNIT;
 }
 
@@ -314,9 +328,7 @@ int rollDice() {
 }
 
 void RandomCostUnit::releaseOwner(Player* player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-    }
+    owner_ = nullptr;
 }
 
 void RandomCostUnit::printUnit(ostream &os) const {
