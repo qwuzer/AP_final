@@ -50,7 +50,7 @@ void Player::addCollectableUnit()
 {
     numCollectableUnits_++;
 }
-void Player::changeStatus(int status)
+void Player::changeStatus(int const status)
 {
     status_=status;
 }
