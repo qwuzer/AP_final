@@ -3,9 +3,14 @@
 #include <string>
 #include <vector>
 
-constexpr int initDeposit=30000;
+constexpr int initDeposit=2000;
 constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
+constexpr int minPlayersNum=1;
+constexpr int alive=1;
+constexpr int jail=2;
+constexpr int dead=3;
+
 class WorldMap;
 
 class Player{
@@ -26,6 +31,8 @@ class Player{
     int getMoney() const;
     int getNumberOfUnits() const;
     int getNumberOfCollectableUnits() const;
+    int getStatus() const;
+
 
         
     private:
@@ -35,6 +42,7 @@ class Player{
         int money_=initDeposit;
         int numUnits_=0;
         int numCollectableUnits_=0;
+        int status_=alive;
 };
 class WorldPlayer{
     public:
@@ -43,7 +51,7 @@ class WorldPlayer{
         WorldPlayer operator++(int);
         
         bool Action1();//new round
-        void Action2(int rolledNum);//after rolled the dice
+        int Action2();//after rolled the dice
         
         Player& getPlayer(int index);
         int currentPlayerIs() const;
@@ -51,7 +59,7 @@ class WorldPlayer{
         int getNumPlayers() const;
         
     private:
-        int numPlayers_;
+        int numPlayers_=1;
         std::vector<Player> players_;
         const std::vector<std::string> defaultName_={"Frieren", "Himmel", "Heiter", "Eisen"};
         int currentPlayer_=0;
@@ -62,6 +70,11 @@ bool checkAnswer(const std::string& answer);
 std::ostream& operator<<(std::ostream& os,const Player& player);
 std::ostream& operator<<(std::ostream& os,WorldPlayer& players);
 std::istream& operator>>(std::istream& is, Player& player);
+bool wantExit();
+bool checkNum(const std::string& answer);
+void displayScreen(WorldMap &map, WorldPlayer &players);
 
+
+// bool isInteger(const std::string& input);
 
 #endif

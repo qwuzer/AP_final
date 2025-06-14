@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <sstream>
 #include "map.h"
 #include "WorldMap.h"
 
@@ -22,6 +23,7 @@ bool Player::deduct(int const cost)
     if (cost>money_)
     {
         cout<<name_<<", you're bankrupt!"<<endl;
+        status_=dead;
         return false;
     }
     money_-=cost;
@@ -33,8 +35,9 @@ void Player::earnings(int const toll)
 }
 void Player::move(int const rolledNum)
 {
+    int originLoc=location_;
     location_=(location_+rolledNum)%mapSize;
-    if (location_==0)
+    if (location_<originLoc)
     {
         earnings(2000);
     }
@@ -72,17 +75,16 @@ int Player::getNumberOfCollectableUnits() const
 {
     return numCollectableUnits_;
 }
-
+int Player::getStatus() const
+{
+    return status_;
+}
         
 
 
 
-WorldPlayer::WorldPlayer(int numPlayers, WorldMap* map):numPlayers_(std::min(numPlayers, maxPlayersNum)), map_(map)
+WorldPlayer::WorldPlayer(int numPlayers, WorldMap* map):numPlayers_(numPlayers), map_(map)
 {
-    if(numPlayers_>maxPlayersNum)
-    {
-        cerr<<"A maximum of "<<maxPlayersNum<<"players is allowed."<<endl;
-    }
     for (int i = 0; i < numPlayers_; ++i) 
     {
         players_.emplace_back(i, defaultName_[i]); 
@@ -90,7 +92,16 @@ WorldPlayer::WorldPlayer(int numPlayers, WorldMap* map):numPlayers_(std::min(num
 }
 WorldPlayer& WorldPlayer::operator++()
 {
-    currentPlayer_=(currentPlayer_+1)%numPlayers_;
+    for (int i = 1; i < maxPlayersNum; i++)
+    {
+        if (players_[(currentPlayer_+i)%numPlayers_].getStatus()==alive)
+        {
+            currentPlayer_=(currentPlayer_+i)%numPlayers_;
+            cout<<"next is "<<currentPlayer_<<endl;
+            break;
+        }
+        
+    }
     return *this;
 }
 WorldPlayer WorldPlayer::operator++(int)
@@ -102,7 +113,7 @@ WorldPlayer WorldPlayer::operator++(int)
 
 bool WorldPlayer::Action1()//new round
 {
-    cout<<players_[currentPlayer_].getName()<<", do you want to roll the dice?(y/n) ";
+    cout<<players_[currentPlayer_].getName()<<", it's your turn. Do you want to roll the dice?(y/n) ";
     string answer;
     cin>>answer;cin.ignore();
     if (checkAnswer(answer))
@@ -114,17 +125,20 @@ bool WorldPlayer::Action1()//new round
         }
         else
         {
-            // cerr<<"yes";
+            int rolledNum=rollDice();
+            players_[currentPlayer_].move(rolledNum);
+            displayScreen(*map_, *this);
+            cout<<players_[currentPlayer_].getName()<<", you rolled:"<<rolledNum<<endl;
             return true;
         }
     }
     cerr<<"Invalid input."<<endl;
     return Action1();
 }
-void WorldPlayer::Action2(int rolledNum)//after rolled the dice
+int WorldPlayer::Action2()//after rolled the dice
 {
-    players_[currentPlayer_].move(rolledNum);
-    (*map_).getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
+    int type=(*map_).getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
+    return type;
 }
 
 Player& WorldPlayer::getPlayer(int index) 
@@ -150,7 +164,11 @@ bool checkAnswer(const std::string& answer)
     static const std::set<char> valid{'y','Y','n','N'};
     return answer.size() == 1 && valid.count(answer[0]);
 }
-
+bool checkNum(const std::string& answer)
+{
+    static const std::set<char> valid{'1','2','3','4'};
+    return answer.size() == 1 && valid.count(answer[0]);
+}
 
 std::ostream& operator<<(std::ostream& os,const Player& player)
 {
@@ -161,7 +179,10 @@ std::ostream& operator<<(std::ostream& os, WorldPlayer& players)
 {
     for (int i = 0; i < players.getNumPlayers(); i++)
     {
-        os << players.getPlayer(i);
+        if (players.getPlayer(i).getStatus()==alive)
+        {
+            os << players.getPlayer(i);
+        }
     }
     return os;
 }
@@ -171,4 +192,24 @@ std::istream& operator>>(std::istream& is,Player& player)
     is>>a;
     player.changeName(a);
     return is;
+}
+
+bool wantExit()
+{
+    cout<<"End Game?(y/n)";
+    string answer;
+    cin>>answer;cin.ignore();
+    if (checkAnswer(answer))
+    {
+        if (answer[0]=='y'||answer[0]=='Y') return true;
+        if (answer[0]=='n'||answer[0]=='N') return false;
+    }
+    cout<<"Invalid input."<<endl;
+    return wantExit(); 
+}
+void displayScreen(WorldMap &map, WorldPlayer &players)
+{
+    system("clear");
+    map.display(players);
+    cout<<players;
 }
