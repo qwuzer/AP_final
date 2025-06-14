@@ -131,7 +131,7 @@ int UpgradableUnit::event(Player &player) {
         if (player.deduct(fine)) {
             owner_->earnings(fine);
         } else {
-            std::cout << "You are bankrupt!\n";
+            // std::cout << "You are bankrupt!\n";
         }
     }
     return UPGRADABLEUNIT;
