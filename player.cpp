@@ -50,6 +50,10 @@ void Player::addCollectableUnit()
 {
     numCollectableUnits_++;
 }
+void Player::changeStatus(int status)
+{
+    status_=status;
+}
 
 std::string Player::getName() const 
 {
@@ -94,10 +98,14 @@ WorldPlayer& WorldPlayer::operator++()
 {
     for (int i = 1; i < maxPlayersNum; i++)
     {
-        if (players_[(currentPlayer_+i)%numPlayers_].getStatus()==alive)
+        if (players_[(currentPlayer_+i)%numPlayers_].getStatus()!=dead)
         {
+            if (players_[(currentPlayer_+i)%numPlayers_].getStatus()==jail)
+            {
+                players_[(currentPlayer_+i)%numPlayers_].changeStatus(alive);
+                continue;
+            }
             currentPlayer_=(currentPlayer_+i)%numPlayers_;
-            cout<<"next is "<<currentPlayer_<<endl;
             break;
         }
         

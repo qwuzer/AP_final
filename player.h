@@ -24,6 +24,7 @@ class Player{
     void move(int const rolledNum);
     void addUnit();
     void addCollectableUnit();
+    void changeStatus(int status);
 
     std::string getName() const;
     int getID() const;
