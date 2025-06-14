@@ -150,16 +150,27 @@ int WorldPlayer::Action2()//after rolled the dice
 }
 bool WorldPlayer::gameOver()
 {
-    if (numBankrupts_>=(numPlayers_-1))
+    int count=0;
+    int winner=-1;
+    for (int i = 0; i < numPlayers_; i++)
     {
+        if (players_[i].getStatus()==dead)
+        {
+            count++;
+        }
+        else
+        {
+            winner=i;
+        }
+    }
+    if (count>=(numPlayers_-1))
+    {
+        cout<<players_[winner].getName()<<", congratulations on your victory!"<<endl;
         return true;
     }
     return false;
 }
-void WorldPlayer::addBankrupt()
-{
-    numBankrupts_++;
-}
+
 
 Player& WorldPlayer::getPlayer(int index) 
 {
@@ -177,10 +188,6 @@ int WorldPlayer::getCurrentPlayerID() const
 int WorldPlayer::getNumPlayers() const
 {
     return numPlayers_;
-}
-int WorldPlayer::getNumBankrupts() const
-{
-    return numBankrupts_;
 }
         
 bool checkAnswer(const std::string& answer)

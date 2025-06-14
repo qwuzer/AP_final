@@ -84,10 +84,14 @@ int main() {
             int unitType=players.Action2();
             ++players;
             std::this_thread::sleep_for(std::chrono::seconds(2));
-            string a;//for debugging
-            cin>>a;cin.ignore();//for debugging
+            // string a;//for debugging
+            // cin>>a;cin.ignore();//for debugging
         }
         else if (wantExit())
+        {
+            break;
+        }
+        if(players.gameOver())
         {
             break;
         }
