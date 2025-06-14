@@ -253,7 +253,7 @@ int RandomCostUnit::event(Player &player) {
     return RANDOMCOSTUNIT;
 }
 
-int RandomCostUnit::rollDice() const {
+int rollDice() {
     return rand() % 6 + 1;
 }
 
@@ -270,6 +270,7 @@ JailUnit::JailUnit(int id, const std::string &name)
 int JailUnit::event(Player &player) {
     // TODO: Handle jail event for player
     cout << player.getName() << " landed in JAIL! You will miss the next round.\n";
+    return JAILUNIT;
 }
 
 void JailUnit::printUnit(std::ostream &os) const {

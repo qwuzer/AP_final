@@ -104,10 +104,8 @@ public:
     int calculateFine() const;
     int event(Player &player) override;
 
-
 private:
     int fine_;
-    int rollDice() const;
 };
 
 // =========== JailUnit ============
@@ -120,5 +118,7 @@ public:
     void printUnit(std::ostream &os) const override;
     int event(Player &player) override;
 };
+
+int rollDice();
 
 #endif // MAP_H
