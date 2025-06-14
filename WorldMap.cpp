@@ -64,9 +64,7 @@ size_t WorldMap::size() const {
 
 void WorldMap::display( WorldPlayer& worldPlayer) const {
     int total = size();
-    cout << "total: " << total << endl;
     int mid = total / 2 + total % 2;
-    cout << "mid: " << mid << endl;
 
     for (int row = 0; row < mid; ++row) {
         int leftIdx = row;
@@ -75,7 +73,6 @@ void WorldMap::display( WorldPlayer& worldPlayer) const {
         std::string left = formatUnitDisplay(leftIdx, worldPlayer);
         std::string right = (rightIdx < total) ? formatUnitDisplay(rightIdx, worldPlayer) : "";
 
-        // std::cout << left << "    " << right << "\n";
         std::cout << std::left << std::setw(40) << left << right << "\n";
     }
 }
@@ -88,7 +85,13 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
     // =players=
     oss << "=";
     for (int p = 0; p < worldPlayer.getNumPlayers(); ++p) {
-        oss << (worldPlayer.getPlayer(p).getLocation() == i ? std::to_string(worldPlayer.getPlayer(p).getID()) : " ");
+        // oss << (worldPlayer.getPlayer(p).getLocation() == i ? std::to_string(worldPlayer.getPlayer(p).getID()) : " ");
+        const Player& player = worldPlayer.getPlayer(p);
+        if (player.getStatus() != dead && player.getLocation() == i) {
+            oss << std::to_string(player.getID());
+        } else {
+            oss << " ";
+        }
     }
     oss << "= ";
 
