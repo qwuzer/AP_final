@@ -268,8 +268,9 @@ JailUnit::JailUnit(int id, const std::string &name)
     : MapUnit(id, name, 0) {}
 
 int JailUnit::event(Player &player) {
-    // TODO: Handle jail event for player
+    // Handle jail event for player
     cout << player.getName() << " landed in JAIL! You will miss the next round.\n";
+    player.changeStatus(jail);
     return JAILUNIT;
 }
 
