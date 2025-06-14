@@ -148,6 +148,18 @@ int WorldPlayer::Action2()//after rolled the dice
     int type=(*map_).getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
     return type;
 }
+bool WorldPlayer::gameOver()
+{
+    if (numBankrupts_>=(numPlayers_-1))
+    {
+        return true;
+    }
+    return false;
+}
+void WorldPlayer::addBankrupt()
+{
+    numBankrupts_++;
+}
 
 Player& WorldPlayer::getPlayer(int index) 
 {
@@ -165,6 +177,10 @@ int WorldPlayer::getCurrentPlayerID() const
 int WorldPlayer::getNumPlayers() const
 {
     return numPlayers_;
+}
+int WorldPlayer::getNumBankrupts() const
+{
+    return numBankrupts_;
 }
         
 bool checkAnswer(const std::string& answer)

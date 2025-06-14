@@ -33,8 +33,6 @@ class Player{
     int getNumberOfUnits() const;
     int getNumberOfCollectableUnits() const;
     int getStatus() const;
-
-
         
     private:
         const int id_;
@@ -53,11 +51,15 @@ class WorldPlayer{
         
         bool Action1();//new round
         int Action2();//after rolled the dice
-        
+        bool gameOver();
+        void addBankrupt();
+
+
         Player& getPlayer(int index);
         int currentPlayerIs() const;
         int getCurrentPlayerID() const;
         int getNumPlayers() const;
+        int getNumBankrupts() const;
         
     private:
         int numPlayers_=1;
@@ -65,6 +67,7 @@ class WorldPlayer{
         const std::vector<std::string> defaultName_={"Frieren", "Himmel", "Heiter", "Eisen"};
         int currentPlayer_=0;
         WorldMap *map_=nullptr;
+        int numBankrupts_=0;
 };
 
 bool checkAnswer(const std::string& answer);
@@ -75,7 +78,5 @@ bool wantExit();
 bool checkNum(const std::string& answer);
 void displayScreen(WorldMap &map, WorldPlayer &players);
 
-
-// bool isInteger(const std::string& input);
 
 #endif
