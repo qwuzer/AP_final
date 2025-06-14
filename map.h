@@ -33,6 +33,7 @@ public:
     const std::vector<Player*>& whoishere() const;
 
     void setOwner(Player *owner);
+    virtual void releaseOwner(Player *player);
 
     virtual void printUnit(std::ostream &os) const;
 
@@ -62,6 +63,7 @@ public:
     int getUpgradePrice() const;
     int getBaseFine() const;
 
+    void releaseOwner(Player *player) override;
     int event(Player &player) override;
     void printUnit(std::ostream &os) const override;
 
@@ -84,6 +86,8 @@ public:
     int getFine() const;
 
     int calculateFine() const;
+    void releaseOwner(Player* player) override;
+
     int event(Player &player) override;
 
 private:

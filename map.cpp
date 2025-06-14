@@ -44,6 +44,16 @@ void MapUnit::setOwner(Player *owner) {
     owner->addUnit();
 }
 
+void MapUnit::releaseOwner(Player *player) {
+    if (owner_ == player) {
+        owner_ = nullptr;
+    }
+
+    removePlayer(player);
+}
+
+
+
 void MapUnit::printUnit(std::ostream &os) const {
     os << "[MapUnit] " << getName() << "\n";
 }
@@ -85,6 +95,14 @@ int UpgradableUnit::getUpgradePrice() const {
 
 int UpgradableUnit::getBaseFine() const {
     return baseFine_;
+}
+
+void UpgradableUnit::releaseOwner(Player* player) {
+    if (owner_ == player) {
+        owner_ = nullptr;
+        level_ = MIN_LEVEL;
+    }
+    removePlayer(player);
 }
 
 int UpgradableUnit::event(Player &player) {
@@ -162,10 +180,17 @@ int CollectableUnit::calculateFine() const {
     return owner_->getNumberOfCollectableUnits() * fine_;
 }
 
+void CollectableUnit::releaseOwner(Player* player) {
+    if (owner_ == player) {
+        owner_ = nullptr;
+    }
+    removePlayer(player);
+}
+
 int CollectableUnit::event(Player &player) {
     if (!owner_) {
         if (player.getMoney() >= price_) {
-            // TODO: Player can choose to buy the unit
+            // Player can choose to buy the unit
             std::cout << "This land is unowned. Buy it for $" << price_ << "? (y/n): ";
             std::string answer;
             std::cin >> answer;
@@ -219,7 +244,7 @@ int RandomCostUnit::calculateFine() const {
 int RandomCostUnit::event(Player &player) {
     if (!owner_) {
         if (player.getMoney() >= price_) {
-            // TODO: Player can choose to buy the unit.
+            // Player can choose to buy the unit.
             cout << "This land is unowned. Buy it for $" << price_ << "? (y/n): ";
             string answer;
             cin >> answer;
@@ -268,8 +293,9 @@ JailUnit::JailUnit(int id, const std::string &name)
     : MapUnit(id, name, 0) {}
 
 int JailUnit::event(Player &player) {
-    // TODO: Handle jail event for player
+    // Handle jail event for player
     cout << player.getName() << " landed in JAIL! You will miss the next round.\n";
+    player.changeStatus(jail);
     return JAILUNIT;
 }
 
