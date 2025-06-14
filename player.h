@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-constexpr int initDeposit=2000;
+constexpr int initDeposit=30000;
 constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
 constexpr int minPlayersNum=1;
@@ -52,14 +52,11 @@ class WorldPlayer{
         bool Action1();//new round
         int Action2();//after rolled the dice
         bool gameOver();
-        void addBankrupt();
-
 
         Player& getPlayer(int index);
         int currentPlayerIs() const;
         int getCurrentPlayerID() const;
         int getNumPlayers() const;
-        int getNumBankrupts() const;
         
     private:
         int numPlayers_=1;
@@ -67,7 +64,6 @@ class WorldPlayer{
         const std::vector<std::string> defaultName_={"Frieren", "Himmel", "Heiter", "Eisen"};
         int currentPlayer_=0;
         WorldMap *map_=nullptr;
-        int numBankrupts_=0;
 };
 
 bool checkAnswer(const std::string& answer);
