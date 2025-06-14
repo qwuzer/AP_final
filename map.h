@@ -9,6 +9,11 @@ constexpr int MAX_PLAYER = 4;
 constexpr int MAX_LEVEL = 5;
 constexpr int MIN_LEVEL = 1;
 
+constexpr int UPGRADABLEUNIT = 1;
+constexpr int COLLECTABLEUNIT = 2;
+constexpr int RANDOMCOSTUNIT = 3;
+constexpr int JAILUNIT = 4;
+
 // ============ MapUnit ============
 class MapUnit {
 public:
@@ -16,7 +21,7 @@ public:
     MapUnit(int id, const std::string &name, int price);
     virtual ~MapUnit() = default;
 
-    virtual void event(Player &player) = 0;
+    virtual int event(Player &player) = 0;
 
     void addPlayer(Player *player);
     void removePlayer(Player *player);
@@ -57,7 +62,7 @@ public:
     int getUpgradePrice() const;
     int getBaseFine() const;
 
-    void event(Player &player) override;
+    int event(Player &player) override;
     void printUnit(std::ostream &os) const override;
 
 private:
@@ -79,7 +84,7 @@ public:
     int getFine() const;
 
     int calculateFine() const;
-    void event(Player &player) override;
+    int event(Player &player) override;
 
 private:
     int fine_;
@@ -97,7 +102,7 @@ public:
     int getFine() const;
 
     int calculateFine() const;
-    void event(Player &player) override;
+    int event(Player &player) override;
 
 
 private:
@@ -113,7 +118,7 @@ public:
     ~JailUnit() override = default;
 
     void printUnit(std::ostream &os) const override;
-    void event(Player &player) override;
+    int event(Player &player) override;
 };
 
 #endif // MAP_H

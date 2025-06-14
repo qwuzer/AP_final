@@ -2,6 +2,8 @@
 #include "map.h"
 #include "WorldMap.h"
 
+using namespace std;
+
 // ============ MapUnit ============
 MapUnit::MapUnit(int id, const std::string &name, int price)
     : id_(id), name_(name), price_(price), owner_(nullptr) {}
@@ -85,25 +87,54 @@ int UpgradableUnit::getBaseFine() const {
     return baseFine_;
 }
 
-void UpgradableUnit::event(Player &player) {
+int UpgradableUnit::event(Player &player) {
     if (!isOwned()) {
         if (player.getMoney() >= price_) {
-            // TODO: Player can choose to buy the unit
+            // Player can choose to buy the unit
+            std::cout << "This land is unowned. Buy it for $" << price_ << "? (y/n): ";
+            std::string answer;
+            std::cin >> answer;
+
+            if (checkAnswer(answer) && (answer[0] == 'y' || answer[0] == 'Y')) {
+                player.deduct(price_);
+                setOwner(&player);
+                std::cout << "You bought " << getName() << " for $" << price_ << ".\n";
+            } else {
+                std::cout << "You chose not to buy " << getName() << ".\n";
+            }
         } 
 
     }
     else if (*owner_ == player) {
         // Player owns the unit, can upgrade if possible
         if (isUpgradable()) {
-            // TODO: Player can choose to upgrade
+            // Player can choose to upgrade
+            std::cout << "Upgrade this land for $" << upgradePrice_ << "? (y/n): ";
+            std::string answer;
+            std::cin >> answer;
+            if (checkAnswer(answer) && (answer[0] == 'y' || answer[0] == 'Y')) {
+                if (player.deduct(upgradePrice_)) {
+                    upgrade();
+                    std::cout << "Upgraded to level " << level_ << ".\n";
+                } else {
+                    std::cout << "Not enough money to upgrade.\n";
+                }
+            }
+        } else {
+            std::cout << "Already at max level.\n";
         }
     }
     else {
         // Player must pay the fine
-        int totalFine = calculateFine();
-        player.deduct(totalFine);
-        owner_->earnings(totalFine);
+        int fine = calculateFine();
+        std::cout << "Owned by " << owner_->getName() << ". Paying fine $" << fine << ".\n";
+        if (player.deduct(fine)) {
+            owner_->earnings(fine);
+        } else {
+            std::cout << "You are bankrupt!\n";
+        }
     }
+    return UPGRADABLEUNIT;
 }
 
 void UpgradableUnit::printUnit(std::ostream &os) const {
@@ -125,27 +156,45 @@ int CollectableUnit::getFine() const {
 
 int CollectableUnit::calculateFine() const {
     if (!owner_) {
-        return 0; // Not owned, no fine
+        return 0; 
     }
-
-    int count = 0;
-    // TODO: Count the number of Collectable units owned by the player
-    return count * fine_;
+    // Count the number of Collectable units owned by the player
+    return owner_->getNumberOfCollectableUnits() * fine_;
 }
 
-void CollectableUnit::event(Player &player) {
+int CollectableUnit::event(Player &player) {
     if (!owner_) {
         if (player.getMoney() >= price_) {
             // TODO: Player can choose to buy the unit
+            std::cout << "This land is unowned. Buy it for $" << price_ << "? (y/n): ";
+            std::string answer;
+            std::cin >> answer;
+
+            if (checkAnswer(answer) && (answer[0] == 'y' || answer[0] == 'Y')) {
+                if (player.deduct(price_)) {
+                    setOwner(&player);
+                    player.addCollectableUnit();
+                    std::cout << "Purchased successfully.\n";
+                } else {
+                    std::cout << "Insufficient funds.\n";
+                }
+            }
         }
     }
     else if (owner_ != &player) {
         // Player must pay the fine to owner
-        // FIXME: Calculate fine based on the number of Collectable units owned by the owner
         int totalFine = calculateFine();
-        player.deduct(totalFine);
-        owner_->earnings(totalFine);
+        std::cout << "Owned by " << owner_->getName() << ". Pay fine $" << totalFine << ".\n";
+
+        if (player.deduct(totalFine)) {
+            owner_->earnings(totalFine);
+        } else {
+            std::cout << "You are bankrupt!\n";
+        }
+    } else {
+        std::cout << "You own this Collectable Unit.\n";
     }
+    return COLLECTABLEUNIT;
 }
 
 void CollectableUnit::printUnit(std::ostream &os) const {
@@ -167,21 +216,41 @@ int RandomCostUnit::calculateFine() const {
     return rollDice() * fine_;
 }
 
-void RandomCostUnit::event(Player &player) {
+int RandomCostUnit::event(Player &player) {
     if (!owner_) {
         if (player.getMoney() >= price_) {
             // TODO: Player can choose to buy the unit.
-            // player.deduct(price_);
-            // setOwner(&player);
-            // player add owned unit
+            cout << "This land is unowned. Buy it for $" << price_ << "? (y/n): ";
+            string answer;
+            cin >> answer;
+
+            if (checkAnswer(answer) && (answer[0] == 'y' || answer[0] == 'Y')) {
+                if (player.deduct(price_)) {
+                    setOwner(&player);
+                    cout << "Purchased successfully.\n";
+                } else {
+                    cout << "Insufficient funds.\n";
+                }
+            }
+        }
+        else {
+            cout << "You cannot afford this Random Cost Unit.\n";
         }
     }
-    else if (*owner_ == player) {
+    else if (owner_ != &player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
-        player.deduct(totalFine);
-        owner_->earnings(totalFine);
+        cout << "Random fine rolled. Pay $" << totalFine << ".\n";
+
+        if (player.deduct(totalFine)) {
+            owner_->earnings(totalFine);
+        } else {
+            cout << "You are bankrupt!\n";
+        }
+    } else {
+        cout << "You own this RandomCost Unit.\n";
     }
+    return RANDOMCOSTUNIT;
 }
 
 int RandomCostUnit::rollDice() const {
@@ -198,8 +267,9 @@ void RandomCostUnit::printUnit(std::ostream &os) const {
 JailUnit::JailUnit(int id, const std::string &name)
     : MapUnit(id, name, 0) {}
 
-void JailUnit::event(Player &player) {
+int JailUnit::event(Player &player) {
     // TODO: Handle jail event for player
+    cout << player.getName() << " landed in JAIL! You will miss the next round.\n";
 }
 
 void JailUnit::printUnit(std::ostream &os) const {
