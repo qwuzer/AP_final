@@ -18,7 +18,7 @@ constexpr int JAILUNIT = 4;
 class MapUnit {
 public:
     // Constructor & Destructor
-    MapUnit(int id, const std::string &name, int price);
+    MapUnit(int id, const std::string &name, int price, WorldMap* worldMap);
     virtual ~MapUnit() = default;
 
     virtual int event(Player &player) = 0;
@@ -33,6 +33,7 @@ public:
     const std::vector<Player*>& whoishere() const;
 
     void setOwner(Player *owner);
+    void setWorldMap(WorldMap* map);
     virtual void releaseOwner(Player *player);
 
     virtual void printUnit(std::ostream &os) const;
@@ -43,13 +44,14 @@ protected:
     int price_;
     Player *owner_;
     std::vector<Player*> whoishere_;
+    WorldMap* worldMap_;
 };
 
 // ============ UpgradableUnit ============
 class UpgradableUnit : public MapUnit {
 public:
     // Constructor & Destructor
-    UpgradableUnit(int id, const std::string &name, int price, int upgrade_price, int base_fine);
+    UpgradableUnit(int id, const std::string &name, int price, int upgrade_price, int base_fine, WorldMap* worldMap);
     ~UpgradableUnit() override = default;
 
     bool isOwned() const;
@@ -78,7 +80,7 @@ private:
 class CollectableUnit : public MapUnit {
 public:
     // Constructor & Destructor
-    CollectableUnit(int id, const std::string &name, int price, int fine);
+    CollectableUnit(int id, const std::string &name, int price, int fine, WorldMap* worldMap);
     ~CollectableUnit() override = default;
 
     void printUnit(std::ostream &os) const override;
@@ -88,7 +90,7 @@ public:
     int calculateFine() const;
     void releaseOwner(Player* player) override;
 
-    int event(Player &player) override;
+    int event(Player &playe) override;
 
 private:
     int fine_;
@@ -98,13 +100,14 @@ private:
 class RandomCostUnit : public MapUnit {
 public:
     // Constructor & Destructor
-    RandomCostUnit(int id, const std::string &name, int price, int fine);
+    RandomCostUnit(int id, const std::string &name, int price, int fine, WorldMap* worldMap);
     ~RandomCostUnit() override = default;
 
     void printUnit(std::ostream &os) const override;
 
     int getFine() const;
 
+    void releaseOwner(Player* player) override;
     int calculateFine() const;
     int event(Player &player) override;
 
@@ -116,7 +119,7 @@ private:
 class JailUnit : public MapUnit {
 public:
     // Constructor & Destructor
-    JailUnit(int id, const std::string &name);
+    JailUnit(int id, const std::string &name, WorldMap* worldMap);
     ~JailUnit() override = default;
 
     void printUnit(std::ostream &os) const override;
