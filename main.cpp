@@ -79,7 +79,6 @@ int main() {
     {
         displayScreen(map, players);
         
-        // 
         if (players.Action1())
         {
             int unitType=players.Action2();
@@ -87,19 +86,15 @@ int main() {
             {
                 
             }
-            // cout<<unitType<<endl;
             ++players;
-            // std::this_thread::sleep_for(std::chrono::seconds(5));
-            string a;
-            cin>>a;cin.ignore();
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            string a;//for debugging
+            cin>>a;cin.ignore();//for debugging
         }
         else if (wantExit())
         {
             break;
         }
-        
     }
-    
-
     return 0;
 }
