@@ -93,7 +93,6 @@ int main() {
         }
         if(players.gameOver())
         {
-            
             break;
         }
     }
