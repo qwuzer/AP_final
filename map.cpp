@@ -51,9 +51,7 @@ void MapUnit::setWorldMap(WorldMap* map) {
 }
 
 void MapUnit::releaseOwner(Player *player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-    }
+    owner_ = nullptr;
 }
 
 
@@ -104,6 +102,7 @@ int UpgradableUnit::getBaseFine() const {
 void UpgradableUnit::releaseOwner(Player* player) {
     owner_ = nullptr;
     level_ = MIN_LEVEL;
+    cout << player->getName() << " has released ownership of " << getName() << ".\n";
 }
 
 int UpgradableUnit::event(Player &player) {
@@ -165,7 +164,6 @@ int UpgradableUnit::event(Player &player) {
                     unit->releaseOwner(&player);
                 }
             }
-            
         }
     }
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -237,7 +235,6 @@ int CollectableUnit::event(Player &player) {
         else {
             owner_->earnings(leftMoney); // Owner still earns the fine
             player.changeStatus(dead);
-            cout << player.getName() << " has gone bankrupt!\n";
             // Handle player bankruptcy (e.g., remove from game, transfer units)
             for (int i = 0; i < worldMap_->size(); ++i) {
                 MapUnit* unit = worldMap_->getUnit(i);
@@ -307,7 +304,6 @@ int RandomCostUnit::event(Player &player) {
         else {
             owner_->earnings(leftMoney); // Owner still earns the fine
             player.changeStatus(dead);
-            cout << player.getName() << " has gone bankrupt!\n";
             // Handle player bankruptcy (e.g., remove from game, transfer units)
             for (int i = 0; i < worldMap_->size(); ++i) {
                 MapUnit* unit = worldMap_->getUnit(i);
