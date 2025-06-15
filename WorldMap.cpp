@@ -1,6 +1,5 @@
 #include "WorldMap.h"
 #include "player.h"
-// #include "map.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -85,7 +84,6 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
     // =players=
     oss << "=";
     for (int p = 0; p < worldPlayer.getNumPlayers(); ++p) {
-        // oss << (worldPlayer.getPlayer(p).getLocation() == i ? std::to_string(worldPlayer.getPlayer(p).getID()) : " ");
         const Player& player = worldPlayer.getPlayer(p);
         if (player.getStatus() != dead && player.getLocation() == i) {
             oss << std::to_string(player.getID());
@@ -101,7 +99,7 @@ std::string WorldMap::formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const 
     // unit name    
     oss << std::setw(10) << std::right << unit->getName();
 
-    // <owner> //getOwner if no owner?
+    // <owner> 
     if (unit->getOwner()) {
         oss << std::setw(4) << std::right << ("{" + std::to_string(unit->getOwner()->getID()) + "}");
     } else {
