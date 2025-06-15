@@ -7,7 +7,6 @@
 #include "map.h"
 #include "WorldMap.h"
 
-
 using namespace std;
 
 Player::Player(int id, string name):id_(id), name_(name){}  
@@ -83,10 +82,6 @@ int Player::getStatus() const
 {
     return status_;
 }
-        
-
-
-
 WorldPlayer::WorldPlayer(int numPlayers, WorldMap* map):numPlayers_(numPlayers), map_(map)
 {
     for (int i = 0; i < numPlayers_; ++i) 
@@ -118,7 +113,6 @@ WorldPlayer WorldPlayer::operator++(int)
     currentPlayer_=(currentPlayer_+1)%numPlayers_;
     return temp;
 }
-
 bool WorldPlayer::Action1()//new round
 {
     cout<<players_[currentPlayer_].getName()<<", it's your turn. Do you want to roll the dice?(y/n) ";
@@ -170,8 +164,6 @@ bool WorldPlayer::gameOver()
     }
     return false;
 }
-
-
 Player& WorldPlayer::getPlayer(int index) 
 {
     return players_.at(index);
@@ -188,8 +180,7 @@ int WorldPlayer::getCurrentPlayerID() const
 int WorldPlayer::getNumPlayers() const
 {
     return numPlayers_;
-}
-        
+}  
 bool checkAnswer(const std::string& answer)
 {
     static const std::set<char> valid{'y','Y','n','N'};
@@ -200,7 +191,6 @@ bool checkNum(const std::string& answer)
     static const std::set<char> valid{'1','2','3','4'};
     return answer.size() == 1 && valid.count(answer[0]);
 }
-
 std::ostream& operator<<(std::ostream& os,const Player& player)
 {
     os<<"["<<player.getID()<<"]"<<player.getName()<<" $"<<player.getMoney()<<" with "<<player.getNumberOfUnits()<<" Units"<<endl;
@@ -224,7 +214,6 @@ std::istream& operator>>(std::istream& is,Player& player)
     player.changeName(a);
     return is;
 }
-
 bool wantExit()
 {
     cout<<"End Game?(y/n)";
