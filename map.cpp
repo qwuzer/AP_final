@@ -1,12 +1,14 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "map.h"
 #include "WorldMap.h"
 
 using namespace std;
 
 // ============ MapUnit ============
-MapUnit::MapUnit(int id, const string &name, int price)
-    : id_(id), name_(name), price_(price), owner_(nullptr) {}
+MapUnit::MapUnit(int id, const string &name, int price, WorldMap* worldMap)
+    : id_(id), name_(name), price_(price), owner_(nullptr) , worldMap_(worldMap) {}
 
 void MapUnit::addPlayer(Player *player) {
     whoishere_.push_back(player);
@@ -44,12 +46,12 @@ void MapUnit::setOwner(Player *owner) {
     owner->addUnit();
 }
 
-void MapUnit::releaseOwner(Player *player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-    }
+void MapUnit::setWorldMap(WorldMap* map) {
+    worldMap_ = map;
+}
 
-    removePlayer(player);
+void MapUnit::releaseOwner(Player *player) {
+    owner_ = nullptr;
 }
 
 
@@ -59,8 +61,8 @@ void MapUnit::printUnit(ostream &os) const {
 }
 
 // ============ UpgradableUnit ============
-UpgradableUnit::UpgradableUnit(int id, const string &name, int price, int upgrade_price, int base_fine)
-    : MapUnit(id, name, price), level_(MIN_LEVEL), upgradePrice_(upgrade_price), baseFine_(base_fine) {}
+UpgradableUnit::UpgradableUnit(int id, const string &name, int price, int upgrade_price, int base_fine, WorldMap* worldMap)
+    : MapUnit(id, name, price, worldMap), level_(MIN_LEVEL), upgradePrice_(upgrade_price), baseFine_(base_fine) {}
 
 bool UpgradableUnit::isOwned() const {
     return owner_ != nullptr;
@@ -98,11 +100,9 @@ int UpgradableUnit::getBaseFine() const {
 }
 
 void UpgradableUnit::releaseOwner(Player* player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-        level_ = MIN_LEVEL;
-    }
-    removePlayer(player);
+    owner_ = nullptr;
+    level_ = MIN_LEVEL;
+    cout << player->getName() << " has released ownership of " << getName() << ".\n";
 }
 
 int UpgradableUnit::event(Player &player) {
@@ -120,7 +120,10 @@ int UpgradableUnit::event(Player &player) {
             } else {
                 cout << "You chose not to buy " << getName() << ".\n";
             }
-        } 
+        }
+        else {
+            cout << "You cannot afford this Upgradable Unit.\n";
+        }
 
     }
     else if (*owner_ == player) {
@@ -144,11 +147,26 @@ int UpgradableUnit::event(Player &player) {
     }
     else {
         // Player must pay the fine
-        int fine = calculateFine();
-        cout << "Owned by " << owner_->getName() << ". Paying fine $" << fine << ".\n";
-        player.deduct(fine);
-        owner_->earnings(fine);
+        int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
+        cout << "Owned by " << owner_->getName() << ". Paying fine $" << totalFine << ".\n";
+        if (player.deduct(totalFine)) {
+            owner_->earnings(totalFine);
+        }
+        else {
+            // Insufficient funds to pay the fine, player go bankrupt
+            owner_->earnings(leftMoney); // Owner still earns the fine
+            player.changeStatus(dead);
+            // Handle player bankruptcy (e.g., remove from game, transfer units)
+            for (int i = 0; i < worldMap_->size(); ++i) {
+                MapUnit* unit = worldMap_->getUnit(i);
+                if (unit && unit->getOwner() == &player) {
+                    unit->releaseOwner(&player);
+                }
+            }
+        }
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return UPGRADABLEUNIT;
 }
 
@@ -162,8 +180,8 @@ void UpgradableUnit::printUnit(ostream &os) const {
 
 
 // ============ CollectableUnit ============
-CollectableUnit::CollectableUnit(int id, const string &name, int price, int fine)
-    : MapUnit(id, name, price), fine_(fine) {}
+CollectableUnit::CollectableUnit(int id, const string &name, int price, int fine, WorldMap* worldMap)
+    : MapUnit(id, name, price, worldMap), fine_(fine) {}
 
 int CollectableUnit::getFine() const {
     return fine_;
@@ -178,10 +196,7 @@ int CollectableUnit::calculateFine() const {
 }
 
 void CollectableUnit::releaseOwner(Player* player) {
-    if (owner_ == player) {
-        owner_ = nullptr;
-    }
-    removePlayer(player);
+    owner_ = nullptr;
 }
 
 int CollectableUnit::event(Player &player) {
@@ -202,16 +217,37 @@ int CollectableUnit::event(Player &player) {
                 }
             }
         }
+        else 
+        {
+            cout << "You cannot afford this Collectable Unit.\n";
+        }
     }
     else if (owner_ != &player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
+
         cout << "Owned by " << owner_->getName() << ". Pay fine $" << totalFine << ".\n";
-        player.deduct(totalFine);
-        owner_->earnings(totalFine);
+        
+        if (player.deduct(totalFine)) {
+            owner_->earnings(totalFine);
+        }
+        else {
+            owner_->earnings(leftMoney); // Owner still earns the fine
+            player.changeStatus(dead);
+            // Handle player bankruptcy (e.g., remove from game, transfer units)
+            for (int i = 0; i < worldMap_->size(); ++i) {
+                MapUnit* unit = worldMap_->getUnit(i);
+                if (unit && unit->getOwner() == &player) {
+                    unit->releaseOwner(&player);
+                }
+            }
+            
+        }
     } else {
         cout << "You own this Collectable Unit.\n";
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return COLLECTABLEUNIT;
 }
 
@@ -223,8 +259,8 @@ void CollectableUnit::printUnit(ostream &os) const {
 
 
 // ============ RandomCostUnit ============
-RandomCostUnit::RandomCostUnit(int id, const string &name, int price, int fine)
-    : MapUnit(id, name, price), fine_(fine) {}
+RandomCostUnit::RandomCostUnit(int id, const string &name, int price, int fine, WorldMap* worldMap)
+    : MapUnit(id, name, price, worldMap), fine_(fine) {}
 
 int RandomCostUnit::getFine() const {
     return fine_;
@@ -258,17 +294,37 @@ int RandomCostUnit::event(Player &player) {
     else if (owner_ != &player) {
         // Player must pay the fine to owner
         int totalFine = calculateFine();
+        int leftMoney = player.getMoney();
+
         cout << "Random fine rolled. Pay $" << totalFine << ".\n";
-        player.deduct(totalFine);
-        owner_->earnings(totalFine);
+
+        if (player.deduct(totalFine)) {
+            owner_->earnings(totalFine);
+        }
+        else {
+            owner_->earnings(leftMoney); // Owner still earns the fine
+            player.changeStatus(dead);
+            // Handle player bankruptcy (e.g., remove from game, transfer units)
+            for (int i = 0; i < worldMap_->size(); ++i) {
+                MapUnit* unit = worldMap_->getUnit(i);
+                if (unit && unit->getOwner() == &player) {
+                    unit->releaseOwner(&player);
+                }
+            }
+        }
     } else {
         cout << "You own this RandomCost Unit.\n";
     }
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     return RANDOMCOSTUNIT;
 }
 
 int rollDice() {
     return rand() % 6 + 1;
+}
+
+void RandomCostUnit::releaseOwner(Player* player) {
+    owner_ = nullptr;
 }
 
 void RandomCostUnit::printUnit(ostream &os) const {
@@ -278,8 +334,8 @@ void RandomCostUnit::printUnit(ostream &os) const {
 }
 
 // =========== JailUnit ============
-JailUnit::JailUnit(int id, const string &name)
-    : MapUnit(id, name, 0) {}
+JailUnit::JailUnit(int id, const string &name, WorldMap* worldMap)
+    : MapUnit(id, name, 0, worldMap) {}
 
 int JailUnit::event(Player &player) {
     // Handle jail event for player
