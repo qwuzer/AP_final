@@ -33,10 +33,10 @@ void Player::earnings(int const toll)
 {
     money_+=toll;
 }
-void Player::move(int const rolledNum)
+void Player::move(int const rolledNum, WorldMap& map_)
 {
     int originLoc=location_;
-    location_=(location_+rolledNum)%mapSize;
+    location_=(location_+rolledNum)%map_.size();
     if (location_<originLoc)
     {
         earnings(2000);
@@ -134,7 +134,7 @@ bool WorldPlayer::Action1()//new round
         else
         {
             int rolledNum=rollDice();
-            players_[currentPlayer_].move(rolledNum);
+            players_[currentPlayer_].move(rolledNum, *map_);
             displayScreen(*map_, *this);
             cout<<players_[currentPlayer_].getName()<<", you rolled:"<<rolledNum<<endl;
             return true;
@@ -210,7 +210,7 @@ std::ostream& operator<<(std::ostream& os, WorldPlayer& players)
 {
     for (int i = 0; i < players.getNumPlayers(); i++)
     {
-        if (players.getPlayer(i).getStatus()==alive)
+        if (players.getPlayer(i).getStatus()!=dead)
         {
             os << players.getPlayer(i);
         }

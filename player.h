@@ -4,7 +4,7 @@
 #include <vector>
 
 constexpr int initDeposit=30000;
-constexpr int mapSize=9;
+// constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
 constexpr int minPlayersNum=1;
 constexpr int alive=1;
@@ -21,7 +21,7 @@ class Player{
     void changeName(const std::string& newName);
     bool deduct(int const cost);
     void earnings(int const toll);
-    void move(int const rolledNum);
+    void move(int const rolledNum, WorldMap& map_);
     void addUnit();
     void addCollectableUnit();
     void changeStatus(int const status);
