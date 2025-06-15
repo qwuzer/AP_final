@@ -4,7 +4,6 @@
 #include <vector>
 
 constexpr int initDeposit=30000;
-// constexpr int mapSize=9;
 constexpr int maxPlayersNum=4;
 constexpr int minPlayersNum=1;
 constexpr int alive=1;

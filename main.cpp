@@ -1,14 +1,14 @@
 #include <iostream>
 #include "WorldMap.h"
 #include "player.h"
-#include <thread>   // for std::this_thread::sleep_for
-#include <chrono>   // for std::chrono::seconds
+#include <thread>   
+#include <chrono>   
 
 using namespace std;
 
 int main() {
     WorldMap map;
-    map.loadFromFile("map.dat");  // Make sure this file exists and is properly formatted
+    map.loadFromFile("map.dat");  
 
     int numPlayers = 0;
     system("clear");
@@ -45,36 +45,6 @@ int main() {
         cout<<"Invalid input."<<endl;
         i--;
     }
-    
-
-    // // Step 3: Simulate some player positions for test
-    // players.getPlayer(0).move(2); // Player 0 to Unit 2
-    // players.getPlayer(1).move(4); // Player 1 to Unit 4
-    // players.getPlayer(2).move(6); // Player 2 to Unit 6
-    // players.getPlayer(3).move(8); // Player 3 to Unit 8
-
-    // cout << players << endl;
-
-    // MapUnit* unit2 = map.getUnit(2);  // Assume Upgradable
-    // if (auto* up = dynamic_cast<UpgradableUnit*>(unit2)) {
-    //     up->setOwner(&players.getPlayer(0));
-    //     up->upgrade(); // Optional: to see level increment
-    // }
-
-    // MapUnit* unit6 = map.getUnit(6);  // Assume Collectable
-    // if (auto* c = dynamic_cast<CollectableUnit*>(unit6)) {
-    //     c->setOwner(&players.getPlayer(2));
-    //     c->getOwner()->addCollectableUnit(); // simulate ownership increase
-    //     c->getOwner()->addCollectableUnit(); // simulate ownership increase
-    // }
-    
-    // // Step 4: Display the map (2-column layout)
-    
-
-    // // Step 5: Print player status
-    // std::cout << "\n========= Player Status =========\n";
-    // std::cout << players;
-    // displayScreen(map, players);
     while (true)
     {
         displayScreen(map, players);
@@ -83,9 +53,7 @@ int main() {
         {
             int unitType=players.Action2();
             ++players;
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            // string a;//for debugging
-            // cin>>a;cin.ignore();//for debugging
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         else if (wantExit())
         {

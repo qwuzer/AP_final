@@ -128,7 +128,6 @@ bool WorldPlayer::Action1()//new round
     {
         if (answer[0]=='n'||answer[0]=='N') 
         {
-            // cerr<<"no";
             return false;
         }
         else
@@ -146,6 +145,7 @@ bool WorldPlayer::Action1()//new round
 int WorldPlayer::Action2()//after rolled the dice
 {
     int type=(*map_).getUnit(players_[currentPlayer_].getLocation())->event(players_[currentPlayer_]);
+
     return type;
 }
 bool WorldPlayer::gameOver()
