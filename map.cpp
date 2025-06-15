@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <ctime>
+#include <random>
 #include "map.h"
 #include "WorldMap.h"
 
@@ -320,7 +322,9 @@ int RandomCostUnit::event(Player &player) {
 }
 
 int rollDice() {
-    return rand() % 6 + 1;
+    static mt19937 gen(time(0));
+    uniform_int_distribution<> dist(1, 6);
+    return dist(gen);
 }
 
 void RandomCostUnit::releaseOwner(Player* player) {
