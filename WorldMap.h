@@ -17,13 +17,13 @@ public:
             units_[i] = nullptr;
         }
     }
-
+    size_t size() const;
     void loadFromFile(const std::string& filename);
     MapUnit* getUnit(int index) const;
     void display(WorldPlayer& worldPlayer) const;
 private:
     MapUnit* units_[20]; 
-    size_t size() const;
+    
     std::string formatUnitDisplay(int i,  WorldPlayer& worldPlayer) const;
 };
 
